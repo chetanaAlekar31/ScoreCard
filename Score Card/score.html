@@ -1,0 +1,105 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Scorecard</title>
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+
+<div class="container" >
+  <h1 class="card-title">Score Card</h1>
+  <div id="scorecard"></div>
+</div>
+
+<script>
+document.addEventListener("DOMContentLoaded", function() {
+  // ID scorecard and stores it in the variable scorecardContainer
+  const scorecardContainer = document.getElementById('scorecard');
+  // This line declares a function named generateScoreCard(). This function will be responsible for generating the scorecard based on the data retrieved from the URL parameters.
+  function generateScoreCard() {
+    // represents the query string parameters of the current URL. It extracts the parameters from URLSearchParams(window.location.search);
+    const urlParams = new URLSearchParams(window.location.search);
+    // these lines are retrive the specific value using get ()  & getAll()
+    // get(): its used for single parameter & getAll(): used for multiple parameters
+    const fullName = urlParams.get('fullName');
+    const rollNumber = urlParams.get('rollNumber');
+    const collegeName = urlParams.get('collegeName');
+    const subjects = urlParams.getAll('subject[]');
+    const outOfList = urlParams.getAll('outOf[]');
+    const obtainedMarksList = urlParams.getAll('obtainedMarks[]');
+    //declared variable initialized it to 0
+    let failedCount = 0;
+//initialize the empty string
+    let html = `
+      <p style="padding-left: 35px;"><strong>Student Name:</strong> ${fullName}</p>
+      <p style="padding-left: 35px;"><strong>Roll Number:</strong> ${rollNumber}</p>
+      <p style="padding-left: 35px;"><strong>College Name:</strong> ${collegeName}</p>
+      
+     
+
+      <table>
+        <thead>
+          <tr>
+            <th>Sr. No.</th>
+            <th>Subject</th>
+            <th>Maximum Marks</th>
+            <th>Marks Obtained</th>
+            <th>Percentage</th>
+            <th>Grade</th>
+          </tr>
+        </thead>
+        <tbody>
+    `;
+    // This line starts a loop over each subject in the subjects array using the forEach() method. It provides a callback function that will be executed for each subject.
+    subjects.forEach((subject, index) => {
+      //calculate the marks
+      const outOf = parseInt(outOfList[index]);
+      const obtainedMarks = parseInt(obtainedMarksList[index]);
+      const percentage = (obtainedMarks / outOf) * 100;
+      let grade;
+//Conditional rendering
+
+      if (percentage >= 90) {
+        grade = 'Distinction';
+      } else if (percentage >= 75) {
+        grade = 'First Class';
+      } else if (percentage >= 40) {
+        grade = 'Pass';
+      } else {
+        grade = 'Fail';
+        failedCount++;
+      }
+// using ternary operator checks condition
+      const rowClass = grade === 'Fail' ? 'failed' : '';
+      // line appends the HTML content for the current subject row to the html variable.
+      html += `
+        <tr class="${rowClass}">
+          <td>${index + 1}</td>
+          <td>${subject}</td>
+          <td>${outOf}</td>
+          <td>${obtainedMarks}</td>
+          <td>${percentage.toFixed(2)}%</td>
+          <td>${grade}</td>
+        </tr>
+      `;
+    });
+
+    html += `
+        </tbody>
+      </table>
+      <p class="remarks">${failedCount === 0 ? 'Passed with Distinction' : `Failed in ${failedCount} subjects`}</p>
+    `;
+
+    scorecardContainer.innerHTML = html;
+    // line marks the end of the generateScoreCard() function 
+
+  }
+  // generateScoreCard() function to generate and display the scorecard when the DOM content is fully loaded.
+  generateScoreCard();
+});
+</script>
+
+</body>
+</html>

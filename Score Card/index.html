@@ -1,0 +1,95 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Student Scorecard</title>
+  <!-- Attach Css  using link tag -->
+  <link rel="stylesheet" href="style.css">
+</head>
+
+<body>
+  <!-- for partioning structure use the div tag -->
+  <div class="container" id="studentInfoForm">
+    <div class="container-1">
+      <h1  >Student Information</h1>
+    </div>
+
+    <!-- inside the form there are Three input fields -->
+    <form id="studentForm" action="score.html" method="GET">
+      <label for="fullName">Full Name:</label>
+      <input type="text" id="fullName" name="fullName" pattern="[A-Za-z\s]{1,50}"minlength="3" maxlength="20" required>
+
+      <label for="rollNumber">Roll Number:(format: ABCD1234E)</label>
+      <input type="text" id="rollNumber" name="rollNumber" pattern="[A-Za-z]{4}[0-9]{4}[A-Za-z]{1}"  minlength="3" maxlength="20" required>
+      <label for="collegeName">Institute Name:</label>
+
+      <select class="collegeName" name="collegeName" required>
+        <option></option>
+        <option value="VIT">VIT</option>
+        <option value="GPR">GPR</option>
+        <option value="COEP">COEP</option>
+      </select>
+
+      <!-- inside subjectContainer there are default subject row represented by another <div> with the class subjectRow -->
+      <div id="subjectContainer">
+        <div class="subjectRow">
+          <!-- inside this subject row there are input fields -->
+          <input type="text" class="subject" name="subject[]" placeholder="Subject" pattern="[A-Za-z\s]+" required>
+          <select class="outOf" name="outOf[]">
+            <option value="50">50</option>
+            <option value="100">100</option>
+          </select>
+          <input type="number" class="obtainedMarks" name="obtainedMarks[]" placeholder="Obtained Marks" min="0"
+            required>
+          <button type="button" class="removeSubject">Remove </button>
+        </div>
+      </div>
+      <!-- There's a button with the ID addMoreSubject. Clicking this button adds another subject row dynamically, allowing the student to enter marks for additional subjects. -->
+      <div class="addButton">
+      <button type="button" id="addMoreSubject">Add more subject</button>
+      <!-- Submit button its used for submit the form -->
+      <button type="submit">Submit</button>
+    </div>
+    </form>
+  </div>
+  <!-- JavaScript code  -->
+  <script>
+    document.addEventListener("DOMContentLoaded", function () {
+      const studentForm = document.getElementById('studentForm');
+
+      studentForm.addEventListener('submit', function (event) {
+        // it listens for the form submission and prevents the default behavior (which is to submit the form to the server directly).
+        event.preventDefault();
+        studentForm.submit();
+
+      });
+      // It adds functionality to dynamically add/remove subject rows when the respective buttons are clicked. This allows flexibility in adding as many subjects as needed.
+      document.getElementById('addMoreSubject').addEventListener('click', function () {
+        const subjectContainer = document.getElementById('subjectContainer');
+        const subjectRow = document.createElement('div');
+        subjectRow.classList.add('subjectRow');
+        subjectRow.innerHTML = `
+        <input type="text" class="subject" name="subject[]"  placeholder="Subject" pattern="[A-Za-z\s]+" required>
+        <select class="outOf"  placeholder="Obtained Marks" name="outOf[]">
+          <option value="50">50</option>
+          <option value="100">100</option>
+        </select>
+        <input type="number" class="obtainedMarks" name="obtainedMarks[]" min="0" required>
+        <button type="button" class="removeSubject">Remove </button>
+      `;
+        subjectContainer.appendChild(subjectRow);
+      });
+
+      document.addEventListener('click', function (event) {
+        // Inside the event listener, this condition checks
+        if (event.target.classList.contains('removeSubject')) {
+          event.target.parentNode.remove();
+        }
+      });
+    });
+  </script>
+</body>
+
+</html>
